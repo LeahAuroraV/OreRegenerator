@@ -16,6 +16,9 @@ interval: 10
 #!!!!!! Flag mode requires worldguard and worldguard customflags
 mode: global
 
+#If set to true players will recieve a message telling them how much longer untill the ore respawn
+right-click-message: true
+
 #The block that resembles the empty ore block
 empty: BEDROCK
 

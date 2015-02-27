@@ -57,12 +57,14 @@ public class EventListener implements Listener{
 	}
 	@EventHandler
 	public void onRightClick(PlayerInteractEvent e){
-		if(e.getAction().equals(Action.RIGHT_CLICK_BLOCK)){
-			if(Material.valueOf(plugin.getConfig().getString("empty").toUpperCase()) == e.getClickedBlock().getType()){
-				if(plugin.sql.getBlockData("id", e.getClickedBlock().getWorld().getName(), e.getClickedBlock().getX(), e.getClickedBlock().getY(), e.getClickedBlock().getZ()) != null){
-					String blocktype = plugin.getConfig().getString("delays."+ plugin.sql.getBlockData("material", e.getClickedBlock().getWorld().getName(), e.getClickedBlock().getX(), e.getClickedBlock().getY(), e.getClickedBlock().getZ()) + ".name");
-					int secs = Integer.parseInt(plugin.sql.getBlockData("respawntime", e.getClickedBlock().getWorld().getName(), e.getClickedBlock().getX(), e.getClickedBlock().getY(), e.getClickedBlock().getZ()));
-					e.getPlayer().sendMessage(ChatColor.RED + "[" + ChatColor.AQUA + "OreRegen" + ChatColor.RED + "] " + ChatColor.GREEN + "This " + ChatColor.RED + blocktype + ChatColor.GREEN + " will respawn in "+ secToHMS(secs));
+		if(plugin.getConfig().getBoolean("right-click-message")){
+			if(e.getAction().equals(Action.RIGHT_CLICK_BLOCK)){
+				if(Material.valueOf(plugin.getConfig().getString("empty").toUpperCase()) == e.getClickedBlock().getType()){
+					if(plugin.sql.getBlockData("id", e.getClickedBlock().getWorld().getName(), e.getClickedBlock().getX(), e.getClickedBlock().getY(), e.getClickedBlock().getZ()) != null){
+						String blocktype = plugin.getConfig().getString("delays."+ plugin.sql.getBlockData("material", e.getClickedBlock().getWorld().getName(), e.getClickedBlock().getX(), e.getClickedBlock().getY(), e.getClickedBlock().getZ()) + ".name");
+						int secs = Integer.parseInt(plugin.sql.getBlockData("respawntime", e.getClickedBlock().getWorld().getName(), e.getClickedBlock().getX(), e.getClickedBlock().getY(), e.getClickedBlock().getZ()));
+						e.getPlayer().sendMessage(ChatColor.RED + "[" + ChatColor.AQUA + "OreRegen" + ChatColor.RED + "] " + ChatColor.GREEN + "This " + ChatColor.RED + blocktype + ChatColor.GREEN + " will respawn in "+ secToHMS(secs));
+					}
 				}
 			}
 		}
