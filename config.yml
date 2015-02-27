@@ -1,0 +1,50 @@
+#Database type, either sqlite or mysql
+databasetype: sqlite
+
+#MySQL Connection settings, only needed when databasetype is set to mysql
+MySQL:
+  host: localhost
+  user: root
+  password: 1234
+  database: minecraft
+  port: 3306
+  
+#Interval ratio for checking for ores to be regenerated in seconds
+interval: 10
+
+#The mode determines how the plugin works, if set to global it will regerate ores globally, if set to flag it will only respawn ores in regions where the flag "respawn" is set to allow
+#!!!!!! Flag mode requires worldguard and worldguard customflags
+mode: global
+
+#The block that resembles the empty ore block
+empty: BEDROCK
+
+#Delays till respawn in Seconds, you can add any block. Use names from this list: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
+delays:
+  COAL_ORE:
+    name: Coal Ore
+    delay: 3600
+  IRON_ORE:
+    name: Iron Ore
+    delay: 3600
+  GOLD_ORE:
+    name: Gold Ore
+    delay: 3600
+  LAPIS_ORE:
+    name: Lapis Lazuli Ore
+    delay: 3600
+  DIAMOND_ORE:
+    name: Diamond Ore
+    delay: 3600
+  EMERALD_ORE:
+    name: Emerald Ore
+    delay: 3600
+  QUARTZ_ORE:
+    name: Quartz Ore
+    delay: 3600
+  REDSTONE_ORE:
+    name: Redstone Ore
+    delay: 3600
+  GLOWING_REDSTONE_ORE:
+    name: Redstone Ore
+    delay: 3600
