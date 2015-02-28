@@ -19,7 +19,10 @@ mode: global
 #If set to true players will recieve a message telling them how much longer untill the ore respawn
 right-click-message: true
 
-#The block that resembles the empty ore block
+#If set to true oreregen is enabled for people in creative mode
+creative: true
+
+#The block that resembles the empty ore block (if nothing is set as empty at the ore)
 empty: BEDROCK
 
 #Delays till respawn in Seconds, you can add any block. Use names from this list: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
@@ -27,27 +30,36 @@ delays:
   COAL_ORE:
     name: Coal Ore
     delay: 3600
+    empty: BEDROCK
   IRON_ORE:
     name: Iron Ore
     delay: 3600
+    empty: BEDROCK
   GOLD_ORE:
     name: Gold Ore
     delay: 3600
+    empty: BEDROCK
   LAPIS_ORE:
     name: Lapis Lazuli Ore
     delay: 3600
+    empty: BEDROCK
   DIAMOND_ORE:
     name: Diamond Ore
     delay: 3600
+    empty: BEDROCK
   EMERALD_ORE:
     name: Emerald Ore
     delay: 3600
+    empty: BEDROCK
   QUARTZ_ORE:
     name: Quartz Ore
     delay: 3600
+    empty: BEDROCK
   REDSTONE_ORE:
     name: Redstone Ore
     delay: 3600
+    empty: BEDROCK
   GLOWING_REDSTONE_ORE:
     name: Redstone Ore
     delay: 3600
+    empty: BEDROCK

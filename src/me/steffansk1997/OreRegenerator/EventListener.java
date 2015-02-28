@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Set;
 
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
@@ -24,6 +25,9 @@ public class EventListener implements Listener{
 	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent e){
+		if(!plugin.getConfig().getBoolean("creative") && e.getPlayer().getGameMode() == GameMode.CREATIVE){
+			return;
+		}
 		Material mat = e.getBlock().getType();
 		Block bl = e.getBlock();
 		Set<String> delays = plugin.getConfig().getConfigurationSection("delays").getKeys(false);
@@ -39,7 +43,12 @@ public class EventListener implements Listener{
 						for(ItemStack item:drops){
 							bl.getWorld().dropItem(bl.getLocation(), item);
 						}
-						bl.setType(Material.valueOf(plugin.getConfig().getString("empty").toUpperCase()));
+						if(plugin.getConfig().contains("delays."+bl.getType().name()+".empty")){
+							Material type = bl.getType();
+							bl.setType(Material.valueOf(plugin.getConfig().getString("delays."+type.name()+".empty").toUpperCase()));
+						}else{
+							bl.setType(Material.valueOf(plugin.getConfig().getString("empty").toUpperCase()));
+						}
 						e.setCancelled(true);
 					}
 				}else{
@@ -49,7 +58,12 @@ public class EventListener implements Listener{
 					for(ItemStack item:drops){
 						bl.getWorld().dropItem(bl.getLocation(), item);
 					}
-					bl.setType(Material.valueOf(plugin.getConfig().getString("empty").toUpperCase()));
+					if(plugin.getConfig().contains("delays."+bl.getType().name()+".empty")){
+						Material type = bl.getType();
+						bl.setType(Material.valueOf(plugin.getConfig().getString("delays."+type.name()+".empty").toUpperCase()));
+					}else{
+						bl.setType(Material.valueOf(plugin.getConfig().getString("empty").toUpperCase()));
+					}
 					e.setCancelled(true);
 				}
 			}
@@ -59,12 +73,10 @@ public class EventListener implements Listener{
 	public void onRightClick(PlayerInteractEvent e){
 		if(plugin.getConfig().getBoolean("right-click-message")){
 			if(e.getAction().equals(Action.RIGHT_CLICK_BLOCK)){
-				if(Material.valueOf(plugin.getConfig().getString("empty").toUpperCase()) == e.getClickedBlock().getType()){
-					if(plugin.sql.getBlockData("id", e.getClickedBlock().getWorld().getName(), e.getClickedBlock().getX(), e.getClickedBlock().getY(), e.getClickedBlock().getZ()) != null){
-						String blocktype = plugin.getConfig().getString("delays."+ plugin.sql.getBlockData("material", e.getClickedBlock().getWorld().getName(), e.getClickedBlock().getX(), e.getClickedBlock().getY(), e.getClickedBlock().getZ()) + ".name");
-						int secs = Integer.parseInt(plugin.sql.getBlockData("respawntime", e.getClickedBlock().getWorld().getName(), e.getClickedBlock().getX(), e.getClickedBlock().getY(), e.getClickedBlock().getZ()));
-						e.getPlayer().sendMessage(ChatColor.RED + "[" + ChatColor.AQUA + "OreRegen" + ChatColor.RED + "] " + ChatColor.GREEN + "This " + ChatColor.RED + blocktype + ChatColor.GREEN + " will respawn in "+ secToHMS(secs));
-					}
+				if(plugin.sql.getBlockData("id", e.getClickedBlock().getWorld().getName(), e.getClickedBlock().getX(), e.getClickedBlock().getY(), e.getClickedBlock().getZ()) != null){
+					String blocktype = plugin.getConfig().getString("delays."+ plugin.sql.getBlockData("material", e.getClickedBlock().getWorld().getName(), e.getClickedBlock().getX(), e.getClickedBlock().getY(), e.getClickedBlock().getZ()) + ".name");
+					int secs = Integer.parseInt(plugin.sql.getBlockData("respawntime", e.getClickedBlock().getWorld().getName(), e.getClickedBlock().getX(), e.getClickedBlock().getY(), e.getClickedBlock().getZ()));
+					e.getPlayer().sendMessage(ChatColor.RED + "[" + ChatColor.AQUA + "OreRegen" + ChatColor.RED + "] " + ChatColor.GREEN + "This " + ChatColor.RED + blocktype + ChatColor.GREEN + " will respawn in "+ secToHMS(secs));
 				}
 			}
 		}

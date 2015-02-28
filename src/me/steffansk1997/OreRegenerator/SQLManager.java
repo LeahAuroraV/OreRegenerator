@@ -135,7 +135,7 @@ public class SQLManager {
 				if(rs1.getInt("respawntime") - plugin.getConfig().getInt("interval") <= 0){
 					Location loc = new Location(Bukkit.getWorld(rs1.getString("world")), rs1.getInt("x"), rs1.getInt("y"), rs1.getInt("z"));
 					Block bl = loc.getBlock();
-					if(bl.getType() == Material.valueOf(plugin.getConfig().getString("empty").toUpperCase())){
+					if(bl.getType() == Material.valueOf(plugin.getConfig().getString("empty").toUpperCase()) || bl.getType() == Material.valueOf(plugin.getConfig().getString("delays." + rs1.getString("material").toUpperCase() + ".empty").toUpperCase())){
 						bl.setType(Material.valueOf(rs1.getString("material").toUpperCase()));
 						bl.setData((byte)rs1.getInt("data"));
 					}
