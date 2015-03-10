@@ -1,8 +1,8 @@
 package me.steffansk1997.OreRegenerator;
 
-import java.util.Collection;
 import java.util.Set;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -12,7 +12,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitScheduler;
 
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.flags.StateFlag;
@@ -39,32 +39,22 @@ public class EventListener implements Listener{
 					if(state == StateFlag.State.ALLOW && state != null){
 						int delay = plugin.getConfig().getInt("delays."+i+".delay");
 						plugin.sql.insertBlock(i, (int) bl.getData(), bl.getX(), bl.getY(), bl.getZ(), bl.getWorld().getName(), delay);
-						Collection<ItemStack> drops = bl.getDrops();
-						for(ItemStack item:drops){
-							bl.getWorld().dropItem(bl.getLocation(), item);
-						}
 						if(plugin.getConfig().contains("delays."+bl.getType().name()+".empty")){
 							Material type = bl.getType();
-							bl.setType(Material.valueOf(plugin.getConfig().getString("delays."+type.name()+".empty").toUpperCase()));
+							setBlock(bl, Material.valueOf(plugin.getConfig().getString("delays."+type.name()+".empty").toUpperCase()));
 						}else{
-							bl.setType(Material.valueOf(plugin.getConfig().getString("empty").toUpperCase()));
+							setBlock(bl, Material.valueOf(plugin.getConfig().getString("empty").toUpperCase()));
 						}
-						e.setCancelled(true);
 					}
 				}else{
 					int delay = plugin.getConfig().getInt("delays."+i+".delay");
 					plugin.sql.insertBlock(i, (int) bl.getData(), bl.getX(), bl.getY(), bl.getZ(), bl.getWorld().getName(), delay);
-					Collection<ItemStack> drops = bl.getDrops();
-					for(ItemStack item:drops){
-						bl.getWorld().dropItem(bl.getLocation(), item);
-					}
 					if(plugin.getConfig().contains("delays."+bl.getType().name()+".empty")){
 						Material type = bl.getType();
-						bl.setType(Material.valueOf(plugin.getConfig().getString("delays."+type.name()+".empty").toUpperCase()));
+						setBlock(bl, Material.valueOf(plugin.getConfig().getString("delays."+type.name()+".empty").toUpperCase()));
 					}else{
-						bl.setType(Material.valueOf(plugin.getConfig().getString("empty").toUpperCase()));
+						setBlock(bl, Material.valueOf(plugin.getConfig().getString("empty").toUpperCase()));
 					}
-					e.setCancelled(true);
 				}
 			}
 		}
@@ -91,5 +81,13 @@ public class EventListener implements Listener{
 	    String seco = (sec == 0 ? "" : ChatColor.RED+""+sec+ChatColor.GREEN + " second" + (sec == 1 ? "" : "s"));
 		return hrs + mns + seco;
 	}
-
+	public void setBlock(final Block bl, final Material m){
+        BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
+        scheduler.scheduleSyncDelayedTask(plugin, new Runnable() {
+            @Override
+            public void run() {
+                bl.setType(m);
+            }
+        }, 1L);
+    }
 }
