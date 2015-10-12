@@ -1,7 +1,7 @@
 name: OreRegenerator
 main: me.steffansk1997.OreRegenerator.OreRegenerator
 softdepend: [WorldGuard, WGCustomFlags]
-version: 1.5
+version: 1.6
 author: steffansk1997
 description: >
              It regenerates your ores after some time

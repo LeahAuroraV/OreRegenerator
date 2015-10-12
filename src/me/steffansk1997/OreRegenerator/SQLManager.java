@@ -1,12 +1,17 @@
 package me.steffansk1997.OreRegenerator;
 
 import java.io.File;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class SQLManager {
 	public Connection connection;
@@ -60,8 +65,6 @@ public class SQLManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return;
-		} finally {
-			closeConnection();
 		}
 	}
 	public void removeItem(int id){
@@ -74,28 +77,29 @@ public class SQLManager {
 			e.printStackTrace();
 		}
 	}
-	public void insertBlock(String material, int data, int x, int y, int z, String world, int respawntime){
-		openConnection();
-		try{
-			PreparedStatement sql = connection.prepareStatement("INSERT INTO `OreRegen-Blocks` (`id`, `material`, `respawntime`, `data`, `x`, `y`, `z`, `world`) VALUES (?,?,?,?,?,?,?,?);");
-			sql.setInt(1, nextID());
-			sql.setString(2, material);
-			sql.setInt(3, respawntime);
-			sql.setInt(4, data);
-			sql.setInt(5, x);
-			sql.setInt(6, y);
-			sql.setInt(7, z);
-			sql.setString(8, world);
-			sql.execute();
-			sql.close();
-		}catch(Exception e){
-			e.printStackTrace();
-		}finally{
-			closeConnection();
-		}
+	public void insertBlock(final String material, final int data, final int x, final int y, final int z, final String world, final int respawntime){
+		new BukkitRunnable() {
+			@Override
+			public void run() {	
+				try{
+					PreparedStatement sql = connection.prepareStatement("INSERT INTO `OreRegen-Blocks` (`id`, `material`, `respawntime`, `data`, `x`, `y`, `z`, `world`) VALUES (?,?,?,?,?,?,?,?);");
+					sql.setInt(1, nextID());
+					sql.setString(2, material);
+					sql.setInt(3, respawntime);
+					sql.setInt(4, data);
+					sql.setInt(5, x);
+					sql.setInt(6, y);
+					sql.setInt(7, z);
+					sql.setString(8, world);
+					sql.execute();
+					sql.close();
+				}catch(Exception e){
+					e.printStackTrace();
+				}
+			}	
+		}.runTaskAsynchronously(plugin);
 	}
 	public String getBlockData(String field, String world, int x, int y, int z){
-		openConnection();
 		try{
 			PreparedStatement sql = connection.prepareStatement("SELECT * FROM `OreRegen-Blocks` WHERE `world`=? AND `x`=? AND `y`=? AND `z`=?;");
 			sql.setString(1, world);
@@ -117,28 +121,49 @@ public class SQLManager {
 		}catch(Exception e){
 			e.printStackTrace();
 			return null;
-		}finally{
-			closeConnection();
 		}
 	}
 	@SuppressWarnings("deprecation")
 	public void check(){
-		openConnection();
 		try{
 			PreparedStatement sql1 = connection.prepareStatement("SELECT * FROM `OreRegen-Blocks`;");
-			ResultSet rs1 = sql1.executeQuery();
+			final ResultSet rs1 = sql1.executeQuery();
 			while(rs1.next()){
 				PreparedStatement sql3 = connection.prepareStatement("UPDATE `OreRegen-Blocks` SET `respawntime`=? WHERE `id`=?;");
 				sql3.setInt(1, rs1.getInt("respawntime") - plugin.getConfig().getInt("interval"));
 				sql3.setInt(2, rs1.getInt("id"));
 				sql3.executeUpdate();
 				if(rs1.getInt("respawntime") - plugin.getConfig().getInt("interval") <= 0){
-					Location loc = new Location(Bukkit.getWorld(rs1.getString("world")), rs1.getInt("x"), rs1.getInt("y"), rs1.getInt("z"));
-					Block bl = loc.getBlock();
-					if(bl.getType() == Material.valueOf(plugin.getConfig().getString("empty").toUpperCase()) || bl.getType() == Material.valueOf(plugin.getConfig().getString("delays." + rs1.getString("material").toUpperCase() + ".empty").toUpperCase())){
-						bl.setType(Material.valueOf(rs1.getString("material").toUpperCase()));
-						bl.setData((byte)rs1.getInt("data"));
-					}
+					new BukkitRunnable() {
+						@Override
+						public void run() {
+							Location loc = null;
+							try {
+								loc = new Location(Bukkit.getWorld(rs1.getString("world")), rs1.getInt("x"), rs1.getInt("y"), rs1.getInt("z"));
+							} catch (SQLException e2) {
+								e2.printStackTrace();
+							}
+							if(loc != null) {
+								Block bl = loc.getBlock();
+								try {
+									if(bl.getType() == Material.valueOf(plugin.getConfig().getString("empty").toUpperCase()) || bl.getType() == Material.valueOf(plugin.getConfig().getString("delays." + rs1.getString("material").toUpperCase() + ".empty").toUpperCase())){
+										try {
+											bl.setType(Material.valueOf(rs1.getString("material").toUpperCase()));
+										} catch (SQLException e1) {
+											e1.printStackTrace();
+										}
+										try {
+											bl.setData((byte) rs1.getInt("data"));
+										} catch (SQLException e) {
+											e.printStackTrace();
+										}
+									}
+								} catch (SQLException e) {
+									e.printStackTrace();
+								}
+							}
+						}
+					}.runTask(plugin);
 					this.removeItem(rs1.getInt("id"));
 				}
 				sql3.close();
@@ -147,8 +172,6 @@ public class SQLManager {
 			sql1.close();
 		}catch(Exception e){
 			e.printStackTrace();
-		}finally{
-			closeConnection();
 		}
 	}
 	public int nextID(){
