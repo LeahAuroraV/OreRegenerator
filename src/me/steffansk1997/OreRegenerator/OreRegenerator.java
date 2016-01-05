@@ -3,7 +3,7 @@ package me.steffansk1997.OreRegenerator;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitScheduler;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import com.mewin.WGCustomFlags.WGCustomFlagsPlugin;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
@@ -34,13 +34,12 @@ public class OreRegenerator extends JavaPlugin{
 	}
 	
 	private void startCheck(){
-        BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
-        scheduler.scheduleSyncRepeatingTask(this, new Runnable() {
-            @Override
-            public void run() {
-               sql.check();
-            }
-        }, 0L, getConfig().getInt("interval")*20L);
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				sql.check();
+			}			
+		}.runTaskTimerAsynchronously(this, 0L, getConfig().getInt("interval")*20L);
 	}
 	public WGCustomFlagsPlugin setWGCustomFlags(){
 		Plugin wgcf = Bukkit.getPluginManager().getPlugin("WGCustomFlags");
