@@ -8,3 +8,35 @@
 plugins{
     id 'java'
 }
+
+repositories {
+    mavenCentral()
+    maven { url "https://maven.enginehub.org/repo/" }
+    maven {
+        url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+
+        // As of Gradle 5.1, you can limit this to only those
+        // dependencies you expect from it
+        content {
+            includeGroup 'org.bukkit'
+            includeGroup 'org.spigotmc'
+        }
+    }
+}
+
+dependencies {
+    compileOnly 'org.spigotmc:spigot-api:+'
+    compileOnly 'com.sk89q.worldguard:worldguard-bukkit:+'
+    implementation group:'org.xerial', name:'sqlite-jdbc', version:'3.8.11.2'
+}
+
+
+tasks.withType(JavaCompile).configureEach {
+    javaCompiler = javaToolchains.compilerFor {
+        languageVersion = JavaLanguageVersion.of( 16 )
+    }
+}
+
+tasks.compileJava {
+    sourceCompatibility = "${JavaVersion.VERSION_1_8}"
+}
