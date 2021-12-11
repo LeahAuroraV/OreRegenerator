@@ -2,10 +2,13 @@ package me.steffansk1997.OreRegenerator;
 
 import java.util.Set;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Material;
+import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.world.World;
+import com.sk89q.worldguard.LocalPlayer;
+import com.sk89q.worldguard.WorldGuard;
+import com.sk89q.worldguard.protection.ApplicableRegionSet;
+import com.sk89q.worldguard.protection.regions.RegionContainer;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -16,7 +19,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.protection.flags.StateFlag;
 
 public class EventListener implements Listener{
 	private OreRegenerator plugin;
@@ -36,8 +38,13 @@ public class EventListener implements Listener{
 			if(Material.valueOf(i.toUpperCase()) == mat){
 				if(plugin.getConfig().getString("mode").equalsIgnoreCase("flag")){
 					WorldGuardPlugin wgp = this.plugin.getWG();
-					StateFlag.State state = (StateFlag.State)wgp.getRegionManager(bl.getWorld()).getApplicableRegions(bl.getLocation()).getFlag(OreRegenerator.FLAG_REGENORES);
-					if(state == StateFlag.State.ALLOW && state != null){
+					RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
+					BlockVector3 blockVector3 = BlockVector3.at(bl.getX(),bl.getY(), bl.getZ());
+					ApplicableRegionSet regions = container.get((World) bl.getWorld()).getApplicableRegions(blockVector3);
+					LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(e.getPlayer());
+
+					// StateFlag.State state = (StateFlag.State)wgp.getRegionManager(bl.getWorld()).getApplicableRegions(bl.getLocation()).getFlag(OreRegenerator.FLAG_REGENORES);
+					if(regions.testState(localPlayer, OreRegenerator.FLAG_REGENORES)){
 						int delay = plugin.getConfig().getInt("delays."+i+".delay");
 						plugin.sql.insertBlock(i, (int) bl.getData(), bl.getX(), bl.getY(), bl.getZ(), bl.getWorld().getName(), delay);
 						if(plugin.getConfig().contains("delays."+bl.getType().name()+".empty")){
