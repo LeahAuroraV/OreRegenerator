@@ -14,9 +14,12 @@ public class OreRegenerator extends JavaPlugin {
 	private WorldGuardPlugin pluginWorldGuard;
 	public static final StateFlag FLAG_REGENORES = new StateFlag("regen-ores",
 			false);
+	public static OreRegenerator plugin;
+
 
 	@Override
 	public void onEnable() {
+		plugin = this;
 		this.saveDefaultConfig();
 		this.getServer().getPluginManager().registerEvents(el, this);
 		sql.initDatabase();
