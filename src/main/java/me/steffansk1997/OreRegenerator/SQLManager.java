@@ -112,10 +112,10 @@ public class SQLManager {
 					sql.setInt(1, nextID());
 					sql.setString(2, material);
 					sql.setInt(3, respawntime);
-					sql.setInt(5, x);
-					sql.setInt(6, y);
-					sql.setInt(7, z);
-					sql.setString(8, world);
+					sql.setInt(4, x);
+					sql.setInt(5, y);
+					sql.setInt(6, z);
+					sql.setString(7, world);
 					sql.execute();
 					sql.close();
 				} catch (Exception e) {
