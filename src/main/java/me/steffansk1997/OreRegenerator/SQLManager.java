@@ -108,15 +108,15 @@ public class SQLManager {
 			public void run() {
 				try {
 					PreparedStatement sql = connection
-							.prepareStatement("INSERT INTO `OreRegen-Blocks` (`material`, `respawntime`, `data`, `x`, `y`, `z`, `world`) VALUES (?,?,?,?,?,?,?);");
-					// sql.setInt(1, nextID());
-					sql.setString(1, material);
-					sql.setInt(2, respawntime);
-					sql.setInt(3, data);
-					sql.setInt(4, x);
-					sql.setInt(5, y);
-					sql.setInt(6, z);
-					sql.setString(7, world);
+							.prepareStatement("INSERT INTO `OreRegen-Blocks` (`id`, `material`, `respawntime`, `data`, `x`, `y`, `z`, `world`) VALUES (?,?,?,?,?,?,?,?);");
+					sql.setInt(1, nextID());
+					sql.setString(2, material);
+					sql.setInt(3, respawntime);
+					sql.setInt(4, data);
+					sql.setInt(5, x);
+					sql.setInt(6, y);
+					sql.setInt(7, z);
+					sql.setString(8, world);
 					sql.execute();
 					sql.close();
 				} catch (Exception e) {
