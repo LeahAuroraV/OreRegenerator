@@ -79,7 +79,7 @@ public class SQLManager {
 		this.openConnection();
 		try {
 			final PreparedStatement sql = connection
-					.prepareStatement("CREATE TABLE IF NOT EXISTS `OreRegen-Blocks` (`ID` ROWID, `material` varchar(100), `respawntime` INT, `data` INT, `x` INT, `y` INT, `z` INT, `world` VARCHAR(255)) ;");
+					.prepareStatement("CREATE TABLE IF NOT EXISTS `OreRegen-Blocks` (`ID` ROWID, `material` varchar(100), `respawntime` INT, `x` INT, `y` INT, `z` INT, `world` VARCHAR(255)) ;");
 			sql.execute();
 			sql.close();
 		} catch (Exception e) {
@@ -100,7 +100,7 @@ public class SQLManager {
 		}
 	}
 
-	public void insertBlock(final String material, final int data, final int x,
+	public void insertBlock(final String material, final int x,
 			final int y, final int z, final String world, final int respawntime) {
 
 		new BukkitRunnable() {
@@ -108,11 +108,10 @@ public class SQLManager {
 			public void run() {
 				try {
 					PreparedStatement sql = connection
-							.prepareStatement("INSERT INTO `OreRegen-Blocks` (`id`, `material`, `respawntime`, `data`, `x`, `y`, `z`, `world`) VALUES (?,?,?,?,?,?,?,?);");
+							.prepareStatement("INSERT INTO `OreRegen-Blocks` (`id`, `material`, `respawntime`, `x`, `y`, `z`, `world`) VALUES (?,?,?,?,?,?,?);");
 					sql.setInt(1, nextID());
 					sql.setString(2, material);
 					sql.setInt(3, respawntime);
-					sql.setInt(4, data);
 					sql.setInt(5, x);
 					sql.setInt(6, y);
 					sql.setInt(7, z);
@@ -171,7 +170,6 @@ public class SQLManager {
 					int x = rs1.getInt("x");
 					int y = rs1.getInt("y");
 					int z = rs1.getInt("z");
-					int data = rs1.getInt("data");
 					String material = rs1.getString("material");
 					new BukkitRunnable() {
 						@Override
@@ -194,7 +192,6 @@ public class SQLManager {
 														.toUpperCase())) {
 									bl.setType(Material.valueOf(material
 											.toUpperCase()));
-									bl.setData((byte) data);
 								}
 							}
 						}

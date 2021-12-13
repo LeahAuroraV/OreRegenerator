@@ -46,7 +46,8 @@ public class EventListener implements Listener{
 					// StateFlag.State state = (StateFlag.State)wgp.getRegionManager(bl.getWorld()).getApplicableRegions(bl.getLocation()).getFlag(OreRegenerator.FLAG_REGENORES);
 					if(regions.testState(localPlayer, OreRegenerator.FLAG_REGENORES)){
 						int delay = plugin.getConfig().getInt("delays."+i+".delay");
-						plugin.sql.insertBlock(i, (int) bl.getData(), bl.getX(), bl.getY(), bl.getZ(), bl.getWorld().getName(), delay);
+
+						plugin.sql.insertBlock(i, bl.getX(), bl.getY(), bl.getZ(), bl.getWorld().getName(), delay);
 						if(plugin.getConfig().contains("delays."+bl.getType().name()+".empty")){
 							Material type = bl.getType();
 							setBlock(bl, Material.valueOf(plugin.getConfig().getString("delays."+type.name()+".empty").toUpperCase()));
@@ -56,7 +57,8 @@ public class EventListener implements Listener{
 					}
 				}else{
 					int delay = plugin.getConfig().getInt("delays."+i+".delay");
-					plugin.sql.insertBlock(i, (int) bl.getData(), bl.getX(), bl.getY(), bl.getZ(), bl.getWorld().getName(), delay);
+
+					plugin.sql.insertBlock(i, bl.getX(), bl.getY(), bl.getZ(), bl.getWorld().getName(), delay);
 					if(plugin.getConfig().contains("delays."+bl.getType().name()+".empty")){
 						Material type = bl.getType();
 						setBlock(bl, Material.valueOf(plugin.getConfig().getString("delays."+type.name()+".empty").toUpperCase()));
