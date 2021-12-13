@@ -15,6 +15,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitScheduler;
 
@@ -72,7 +73,7 @@ public class EventListener implements Listener{
 	@EventHandler
 	public void onRightClick(final PlayerInteractEvent e){
 		if(plugin.getConfig().getBoolean("right-click-message")){
-			if(e.getAction().equals(Action.RIGHT_CLICK_BLOCK)){
+			if(e.getAction().equals(Action.RIGHT_CLICK_BLOCK) && e.getHand().equals(EquipmentSlot.HAND)){
 				new BukkitRunnable() {
 					@Override 
 					public void run() {
