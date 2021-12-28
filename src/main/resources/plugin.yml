@@ -3,5 +3,6 @@ main: me.steffansk1997.OreRegenerator.OreRegenerator
 softdepend: [WorldGuard, WGCustomFlags]
 version: 1.6
 author: steffansk1997
+api-version: 1.17
 description: >
              It regenerates your ores after some time

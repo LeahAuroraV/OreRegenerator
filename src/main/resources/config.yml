@@ -51,15 +51,11 @@ delays:
     name: Emerald Ore
     delay: 3600
     empty: BEDROCK
-  QUARTZ_ORE:
+  NETHER_QUARTZ_ORE:
     name: Quartz Ore
     delay: 3600
     empty: BEDROCK
   REDSTONE_ORE:
-    name: Redstone Ore
-    delay: 3600
-    empty: BEDROCK
-  GLOWING_REDSTONE_ORE:
     name: Redstone Ore
     delay: 3600
     empty: BEDROCK
